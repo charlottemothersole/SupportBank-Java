@@ -15,5 +15,7 @@ Open this folder in Visual Studio Code.
 4. Open a command-prompt in this same folder.  
 Your trainer can show you how to do this, if you need any help.
 
-5. Run this command to run your code:  
+5. Run `gradle wrapper`. This only needs to be done once.
+
+6. Run this command to run your code:  
 `./gradlew run`
