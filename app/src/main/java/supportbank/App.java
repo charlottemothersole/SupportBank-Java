@@ -3,12 +3,23 @@
  */
 package supportbank;
 
-public class App {
-    public String getGreeting() {
-        return "Hello World!";
-    }
+import account.Account;
+import account.ReadFile;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+// import accounts.FileReader;
 
+
+public class App {
     public static void main(String[] args) {
-        System.out.println(new App().getGreeting());
+        //import the transaction file 
+        // iterate over it and identify any new names
+        //create any new account objects needed
+
+        ReadFile reader = new ReadFile();
+        reader.readFile();
+        
     }
 }
+
