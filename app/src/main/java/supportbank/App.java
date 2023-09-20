@@ -3,23 +3,133 @@
  */
 package supportbank;
 
-import account.Account;
-import account.ReadFile;
+// import account.BankingSystem;
+// import account.Account;
+// import account.ReadFile;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.HashMap;
+import java.text.DecimalFormat;
+import java.util.Scanner;
 // import accounts.FileReader;
 
+class BankingSystem {
+    // create hashmap to store account names and new instance objects
+    private HashMap<String, Account> allAccounts = new HashMap<>();
+    DecimalFormat decfor = new DecimalFormat("0.00");  
+
+    public void createAccount( String name) {
+        // If doesnt exist in allAccounts hashmap, add it
+        allAccounts.putIfAbsent(name, new Account(name));
+    }
+
+    public void processTransaction(String from, String to, double amount) {
+        //get the from and to accounts
+        Account loaner = allAccounts.get(from);
+        Account loanee = allAccounts.get(to);
+        //add or deduct the amount from the user account
+        loaner.addMoney(amount);
+        loanee.deductMoney(amount);
+    }
+
+    public void listAll() {
+
+        System.out.println("These are all the accounts and balances");
+        //list all account names and balances
+        for(Account account : allAccounts.values()) {
+            System.out.println(account.getName() + ": " + decfor.format(account.getBalance()));
+        }
+    }
+}
+class Account {
+    //declare the variables
+    private double balance = 0.00;
+    private String name;
+
+    // Constructor method to initialise the 0 balance
+    public Account(String name) {
+        this.name = name;
+    }
+
+    public String getName() {
+        return this.name;
+    }
+
+    public double getBalance() {
+        return this.balance;
+    }
+
+    public void addMoney(double amount) {
+        this.balance += amount;
+    }
+
+    public void deductMoney(double amount) {
+        this.balance -= amount;
+    }
+}
+
+class ReadFile {
+    // Date,From,To,Narrative,Amount
+    private BankingSystem bankingSystem;
+    public ReadFile(BankingSystem bankingSystem) {
+        this.bankingSystem = bankingSystem;
+    }
+    public void readFile() {
+        BufferedReader reader;
+        try {
+            reader = new BufferedReader(new FileReader("/home/charlottemothersole/Documents/Bootcamp/SupportBank/Transactions2014.csv"));
+            //reads the first line (column headers)
+            String line = reader.readLine();
+            while ((line = reader.readLine()) != null) {
+                //read the next line of data
+                // line = reader.readLine();
+                //for each line, identify who the payment was from 
+                // if the loaner is not in the array of names, add them and create the account object
+                // credit their balance, and repeat process to debit the recipient
+                String[] splitLine = line.split(",");
+                String date = splitLine[0];
+                String loaner = splitLine[1];
+                String loanee = splitLine[2];
+                String desc = splitLine[3];
+                double amount = Double.parseDouble(splitLine[4]);
+                bankingSystem.createAccount(loaner);
+                bankingSystem.createAccount(loanee);
+                bankingSystem.processTransaction(loaner, loanee, amount);
+            }
+
+            reader.close();
+        
+        } catch (IOException e) {
+
+        }
+    }
+}
 
 public class App {
     public static void main(String[] args) {
         //import the transaction file 
         // iterate over it and identify any new names
         //create any new account objects needed
-
-        ReadFile reader = new ReadFile();
-        reader.readFile();
         
+        //create new banking system
+        BankingSystem bankingSystem = new BankingSystem();
+        //read the file
+        ReadFile reader = new ReadFile(bankingSystem);
+        reader.readFile();
+        Scanner scanner = new Scanner(System.in);
+        //take user input command
+        
+        System.out.println("Please enter a command: ");
+        //For some reason the programme is not letting me type a command to the console so the below not working yet!
+        if(scanner.hasNextLine()){
+            String command = scanner.nextLine();  // Read user input
+        //     //list all accounts and balances
+            if(command == "List all") {
+                System.out.println("Thanks!");
+                bankingSystem.listAll();
+            }
+        }
     }
 }
 
